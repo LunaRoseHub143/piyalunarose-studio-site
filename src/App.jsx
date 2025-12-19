@@ -146,6 +146,11 @@ const App = () => {
 
             {/* Background Decor - ClarittView Inspired Luminous Glows */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+              {/* Artwork Background Layer */}
+              <div
+                className="absolute inset-0 opacity-[0.04] mix-blend-luminosity bg-cover bg-center bg-no-repeat grayscale"
+                style={{ backgroundImage: 'url(/hero-sketch.jpg)' }}
+              />
               <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-900/40 rounded-full blur-[120px] mix-blend-screen opacity-50" />
               <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-900/30 rounded-full blur-[100px] mix-blend-screen opacity-40" />
               <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-500/10 rounded-full blur-[80px] opacity-20" />
