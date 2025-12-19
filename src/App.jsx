@@ -40,52 +40,16 @@ const App = () => {
     }
   };
 
-  // Custom Logo Component (Tries to load your image, falls back to SVG)
+  // Custom Logo Component (Uses the new circular logo)
   const Logo = ({ className = "w-10 h-10" }) => {
-    const [imageError, setImageError] = useState(false);
-
-    if (!imageError) {
-      return (
-        <img
-          src="IMG_4913.jpeg"
-          alt="Piya LunaRose Logo"
-          className={`${className} object-contain`}
-          onError={() => setImageError(true)}
-        />
-      );
-    }
-
     return (
-      <svg viewBox="0 0 64 64" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Geometric Crescent Moon */}
-        <path
-          d="M48 32C48 45.2548 37.2548 56 24 56C10.7452 56 0 45.2548 0 32C0 18.7452 10.7452 8 24 8C26.5 8 29 8.5 31.5 9.5C22 13 16 22 16 32C16 42 22 51 31.5 54.5C29 55.5 26.5 56 24 56"
-          className="stroke-stone-800"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      <div className={`${className} rounded-full overflow-hidden border border-white/20 shadow-lg`}>
+        <img
+          src="/lunarose-logo.jpg"
+          alt="Piya LunaRose Logo"
+          className="w-full h-full object-cover"
         />
-        {/* Geometric Facets inside Moon (Architecture/Structure) */}
-        <path d="M16 32L31.5 9.5" className="stroke-stone-300" strokeWidth="1" />
-        <path d="M16 32L31.5 54.5" className="stroke-stone-300" strokeWidth="1" />
-        <path d="M16 32H28" className="stroke-stone-300" strokeWidth="1" />
-
-        {/* Stylized Rose (Organic/Embodiment) */}
-        <path
-          d="M42 20C46 20 50 23 50 27C50 30 47 32 45 32C47 32 52 34 52 38C52 43 47 46 42 46C38 46 34 43 34 38"
-          className="stroke-indigo-600"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M42 26C44 26 45 27 45 28C45 29 44 30 42 30C40 30 39 29 39 28C39 27 40 26 42 26Z"
-          className="stroke-indigo-600"
-          strokeWidth="2"
-        />
-        <path d="M42 46V54" className="stroke-emerald-600" strokeWidth="2" strokeLinecap="round" />
-        <path d="M42 50C42 50 46 48 48 50" className="stroke-emerald-600" strokeWidth="2" strokeLinecap="round" />
-        <path d="M42 52C42 52 38 51 36 53" className="stroke-emerald-600" strokeWidth="2" strokeLinecap="round" />
-      </svg>
+      </div>
     );
   };
 
