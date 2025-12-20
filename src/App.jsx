@@ -196,9 +196,10 @@ const App = () => {
             <span>Systems • Clarity • Resilience</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-serif font-bold text-stone-900 leading-[0.9] mb-12 tracking-tight">
-            Architecting <span className="text-indigo-600 block md:inline">scalable systems</span>
-            <span className="block text-stone-500 italic font-normal mt-2 text-2xl md:text-4xl lg:text-5xl tracking-normal"> & embodied practices.</span>
+          <h1 className="font-serif text-stone-900 tracking-tight leading-[1.1] mb-12 flex flex-col items-center">
+            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">Architecting</span>
+            <span className="text-3xl md:text-4xl lg:text-5xl font-semibold text-indigo-600/90 -mt-1">scalable systems</span>
+            <span className="text-lg md:text-xl lg:text-2xl font-light italic text-stone-400 mt-2 tracking-wide">& embodied practices.</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-stone-600 max-w-2xl mx-auto mb-16 leading-relaxed font-light">
