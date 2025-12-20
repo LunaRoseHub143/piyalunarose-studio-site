@@ -115,7 +115,7 @@ const App = () => {
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         {/* Artwork Background Layer */}
         <div
-          className="absolute inset-0 opacity-[0.8] mix-blend-multiply bg-cover bg-[center_70%] bg-no-repeat grayscale-[0.3] contrast-[1.05] brightness-[0.95]"
+          className="absolute inset-0 !opacity-[0.8] !mix-blend-multiply !bg-cover !bg-[position:center_70%] !bg-no-repeat grayscale-[0.3] !contrast-[1.05] !brightness-[0.95]"
           style={{
             backgroundImage: 'url(/hero-sketch-v2.jpg)',
             WebkitMaskImage: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,1) 80%)',
@@ -123,7 +123,7 @@ const App = () => {
           }}
         />
         {/* Neutral Calming Overlay */}
-        <div className="absolute inset-0 bg-[#0f121e]/[0.18]" />
+        <div className="absolute inset-0 !bg-[#0f121e]/[0.25]" />
 
         {/* Subtle Accent Glows */}
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-100/40 rounded-full blur-[140px] opacity-40" />
@@ -196,10 +196,10 @@ const App = () => {
             <span>Systems • Clarity • Resilience</span>
           </div>
 
-          <h1 className="font-serif text-stone-900 tracking-tight leading-[1.1] mb-12 flex flex-col items-center">
-            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">Architecting</span>
-            <span className="text-3xl md:text-4xl lg:text-5xl font-semibold text-indigo-600/90 -mt-1">scalable systems</span>
-            <span className="text-lg md:text-xl lg:text-2xl font-light italic text-stone-400 mt-2 tracking-wide">& embodied practices.</span>
+          <h1 className="font-serif text-stone-900 !tracking-tight !leading-[1.1] mb-12 flex flex-col items-center">
+            <span className="!text-[48px] md:!text-[84px] !font-bold !tracking-tighter">Architecting</span>
+            <span className="!text-[42px] md:!text-[72px] !font-semibold !text-indigo-600/90 !opacity-[0.9] -mt-2">scalable systems</span>
+            <span className="!text-[22px] md:!text-[34px] !font-light italic !text-stone-400 !opacity-[0.7] mt-3 !tracking-wide">& embodied practices.</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-stone-600 max-w-2xl mx-auto mb-16 leading-relaxed font-light">
