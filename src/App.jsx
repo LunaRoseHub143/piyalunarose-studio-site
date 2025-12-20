@@ -115,16 +115,19 @@ const App = () => {
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         {/* Artwork Background Layer */}
         <div
-          className="absolute inset-0 opacity-[0.9] mix-blend-multiply bg-cover bg-center bg-no-repeat grayscale-[0.5] contrast-[1.05] brightness-[1.05]"
+          className="absolute inset-0 opacity-[0.8] mix-blend-multiply bg-cover bg-[center_70%] bg-no-repeat grayscale-[0.3] contrast-[1.05] brightness-[0.95]"
           style={{
             backgroundImage: 'url(/hero-sketch-v2.jpg)',
-            WebkitMaskImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 10%, rgba(255,255,255,1) 90%)',
-            maskImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 10%, rgba(255,255,255,1) 90%)'
+            WebkitMaskImage: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,1) 80%)',
+            maskImage: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,1) 80%)'
           }}
         />
+        {/* Neutral Calming Overlay */}
+        <div className="absolute inset-0 bg-[#0f121e]/[0.18]" />
+
         {/* Subtle Accent Glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-100/50 rounded-full blur-[140px] opacity-60" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-100/40 rounded-full blur-[120px] opacity-50" />
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-100/40 rounded-full blur-[140px] opacity-40" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-100/30 rounded-full blur-[120px] opacity-30" />
       </div>
 
       {/* Navigation */}
@@ -193,9 +196,9 @@ const App = () => {
             <span>Systems • Clarity • Resilience</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-serif font-bold text-stone-900 leading-[0.85] mb-12 tracking-tighter">
-            Architecting <span className="text-indigo-600">scalable systems</span>
-            <span className="block text-stone-400 italic font-normal mt-4 text-4xl md:text-6xl lg:text-7xl"> & embodied practices.</span>
+          <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-serif font-bold text-stone-900 leading-[0.9] mb-12 tracking-tight">
+            Architecting <span className="text-indigo-600 block md:inline">scalable systems</span>
+            <span className="block text-stone-500 italic font-normal mt-2 text-2xl md:text-4xl lg:text-5xl tracking-normal"> & embodied practices.</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-stone-600 max-w-2xl mx-auto mb-16 leading-relaxed font-light">
