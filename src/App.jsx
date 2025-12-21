@@ -18,10 +18,12 @@ import {
   ShieldCheck,
   AlertCircle
 } from 'lucide-react';
+import DecisionGate from './components/DecisionGate';
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showGate, setShowGate] = useState(false);
 
   // Handle scroll for navbar transparency effect
   useEffect(() => {
@@ -415,17 +417,20 @@ const App = () => {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-900/20 to-transparent"></div>
             <h2 className="text-5xl md:text-8xl font-serif font-bold text-white mb-12 relative z-10 tracking-tight">Build something resilient.</h2>
             <div className="flex flex-col sm:flex-row gap-8 justify-center items-center relative z-10">
-              <a
-                href="mailto:Hello@lunarosedhealinghub.com"
+              <button
+                onClick={() => setShowGate(true)}
                 className="px-16 py-6 bg-white text-stone-900 font-bold text-xl rounded-3xl hover:scale-105 transition-all shadow-2xl shadow-white/10"
               >
                 Start Engagement
-              </a>
+              </button>
               <span className="text-stone-400 font-light text-xl tracking-wider">Hello@lunarosedhealinghub.com</span>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Decision Gate Modal */}
+      <DecisionGate isOpen={showGate} onClose={() => setShowGate(false)} />
 
       {/* Footer */}
       <footer className="py-24 px-6 border-t border-stone-100 relative z-10 bg-white">
