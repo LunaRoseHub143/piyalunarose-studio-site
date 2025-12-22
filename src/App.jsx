@@ -329,6 +329,7 @@ const App = () => {
               role="Product Architect • UI/UX • Build"
               focus="Clean interfaces and predictable system logic."
               colorClass="bg-indigo-600"
+              link="https://www.clarittview.com/"
             />
           </div>
         </div>
