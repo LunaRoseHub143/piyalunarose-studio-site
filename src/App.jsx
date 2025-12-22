@@ -11,6 +11,7 @@ import DecisionGate from './components/DecisionGate';
 import Home from './pages/Home';
 import Labs from './pages/Labs';
 import Library from './pages/Library';
+import LibraryEditor from './pages/LibraryEditor';
 import Notes from './pages/Notes';
 import Login from './pages/Login';
 
@@ -59,6 +60,22 @@ const App = () => {
           <Route path="/" element={<Home setShowGate={setShowGate} />} />
           <Route path="/labs" element={<Labs />} />
           <Route path="/library" element={<Library />} />
+          <Route
+            path="/library/new"
+            element={
+              <ProtectedRoute>
+                <LibraryEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/library/edit/:id"
+            element={
+              <ProtectedRoute>
+                <LibraryEditor />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/admin" element={<Login />} />
           <Route
             path="/notes"
