@@ -169,9 +169,16 @@ const Notes = () => {
                 {/* Editor Area */}
                 <div className="flex-1 p-6 md:p-12 flex flex-col bg-white">
                     <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-stone-100 pb-6 md:pb-8">
-                        <div className="flex items-center gap-3 text-stone-400 italic text-sm">
+                        <div className="flex items-center gap-3">
                             <Lock className="w-4 h-4 text-indigo-500" />
-                            <span>Private studying notes</span>
+                            <span className="text-stone-400 italic text-sm hidden sm:inline">Private studying notes</span>
+                            <button
+                                onClick={() => createNote()}
+                                className="md:hidden p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-all active:scale-95"
+                                title="New Note"
+                            >
+                                <Plus className="w-4 h-4" />
+                            </button>
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="text-right flex flex-col items-end">
