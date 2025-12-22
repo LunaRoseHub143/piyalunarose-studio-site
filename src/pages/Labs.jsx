@@ -77,22 +77,46 @@ const Labs = () => {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {[1, 2, 3].map((i) => (
+                    {[
+                        {
+                            title: "Crystalline Depth",
+                            img: "/Users/piyaphunsawat/.gemini/antigravity/brain/d9b79fde-0639-479a-a7c8-ebc3be02046f/nebula_indigo_crystal_1766447877737.png",
+                            desc: "Refracting light through high-density frosted layers."
+                        },
+                        {
+                            title: "Orbital Flow",
+                            img: "/Users/piyaphunsawat/.gemini/antigravity/brain/d9b79fde-0639-479a-a7c8-ebc3be02046f/cosmic_purple_orb_1766447889552.png",
+                            desc: "Dynamic translucency with liquid motion gradients."
+                        },
+                        {
+                            title: "Solar Geometry",
+                            img: "/Users/piyaphunsawat/.gemini/antigravity/brain/d9b79fde-0639-479a-a7c8-ebc3be02046f/golden_solar_geometry_1766447901589.png",
+                            desc: "Intersecting planes of light within a glass framework."
+                        }
+                    ].map((card, i) => (
                         <motion.div
                             key={i}
                             whileHover={{ y: -10 }}
-                            className="relative group h-[450px] rounded-[2.5rem] overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-3xl p-10 flex flex-col justify-end"
+                            className="relative group h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 bg-black flex flex-col justify-end"
                         >
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl group-hover:bg-indigo-500/20 transition-all" />
-                            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 blur-3xl group-hover:bg-purple-500/20 transition-all" />
+                            {/* Background Image with Glass Overlay */}
+                            <div className="absolute inset-0 z-0">
+                                <img src={card.img} alt={card.title} className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                                <div className="absolute inset-0 backdrop-blur-[20px] group-hover:backdrop-blur-[10px] transition-all duration-700" />
+                            </div>
 
-                            <h3 className="text-2xl font-serif font-bold mb-4">Spectral Card {i}</h3>
-                            <p className="text-stone-500 text-sm leading-relaxed mb-6">
-                                Utilizing `backdrop-filter: blur(40px)` combined with subtle white borders to simulate premium frosted glass.
-                            </p>
-                            <div className="flex gap-2">
-                                <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[8px] uppercase font-bold tracking-wider">Depth</div>
-                                <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[8px] uppercase font-bold tracking-wider">Blur</div>
+                            <div className="relative z-10 p-10">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl group-hover:bg-white/10 transition-all" />
+
+                                <h3 className="text-2xl font-serif font-bold mb-4">{card.title}</h3>
+                                <p className="text-stone-300 text-sm leading-relaxed mb-6 font-light">
+                                    {card.desc}
+                                </p>
+                                <div className="flex gap-2">
+                                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[8px] uppercase font-bold tracking-wider">Raytracing</div>
+                                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[8px] uppercase font-bold tracking-wider">Refraction</div>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
