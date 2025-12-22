@@ -84,33 +84,54 @@ const App = () => {
     </div>
   );
 
-  const WorkCard = ({ title, subtitle, role, focus, colorClass }) => (
-    <div className="group relative overflow-hidden rounded-[2.5rem] bg-white border border-stone-200 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-stone-300">
-      <div className={`absolute top-0 left-0 w-1.5 h-full ${colorClass} opacity-60 transition-all duration-500 group-hover:w-3`} />
-      <div className="p-10 md:p-14">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-10">
-          <div>
-            <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 tracking-tight">{title}</h3>
-            <p className="text-indigo-600 font-medium mt-2 tracking-wide text-lg">{subtitle}</p>
+  const WorkCard = ({ title, subtitle, role, focus, colorClass, link }) => {
+    const CardContent = (
+      <>
+        <div className={`absolute top-0 left-0 w-1.5 h-full ${colorClass} opacity-60 transition-all duration-500 group-hover:w-3`} />
+        <div className="p-10 md:p-14">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-10">
+            <div>
+              <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 tracking-tight">{title}</h3>
+              <p className="text-indigo-600 font-medium mt-2 tracking-wide text-lg">{subtitle}</p>
+            </div>
+            <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-stone-50 border border-stone-200 group-hover:bg-stone-900 group-hover:text-white transition-all duration-500 shadow-sm">
+              <ArrowRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
+            </span>
           </div>
-          <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-stone-50 border border-stone-200 group-hover:bg-stone-900 group-hover:text-white transition-all duration-500 shadow-sm">
-            <ArrowRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
-          </span>
-        </div>
 
-        <div className="grid md:grid-cols-2 gap-10 mt-10 border-t border-stone-100 pt-10">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400 block mb-3">Role</span>
-            <p className="text-stone-800 font-normal leading-relaxed text-lg">{role}</p>
-          </div>
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400 block mb-3">Focus</span>
-            <p className="text-stone-800 font-normal leading-relaxed text-lg">{focus}</p>
+          <div className="grid md:grid-cols-2 gap-10 mt-10 border-t border-stone-100 pt-10">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400 block mb-3">Role</span>
+              <p className="text-stone-800 font-normal leading-relaxed text-lg">{role}</p>
+            </div>
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400 block mb-3">Focus</span>
+              <p className="text-stone-800 font-normal leading-relaxed text-lg">{focus}</p>
+            </div>
           </div>
         </div>
+      </>
+    );
+
+    if (link) {
+      return (
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative block overflow-hidden rounded-[2.5rem] bg-white border border-stone-200 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-stone-300"
+        >
+          {CardContent}
+        </a>
+      );
+    }
+
+    return (
+      <div className="group relative overflow-hidden rounded-[2.5rem] bg-white border border-stone-200 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10 hover:border-stone-300">
+        {CardContent}
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-stone-800 selection:bg-indigo-100 selection:text-indigo-900">
@@ -300,6 +321,7 @@ const App = () => {
               role="Founder • Systems Design • Methodology"
               focus="Human-centered healing and educational flow."
               colorClass="bg-emerald-500"
+              link="https://maps.app.goo.gl/QQivX2ioEXEiaTUB8"
             />
             <WorkCard
               title="ClarittView™"
