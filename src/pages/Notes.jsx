@@ -59,7 +59,8 @@ const Notes = () => {
         }
     };
 
-    const saveNote = async () => {
+    const saveNote = async (e) => {
+        if (e) e.preventDefault();
         if (!activeNote || !user) return;
         setSaving(true);
         setError(null);
@@ -175,6 +176,7 @@ const Notes = () => {
                                 {error && <span className="text-[9px] text-red-500 font-medium">Error: {error}</span>}
                             </div>
                             <button
+                                type="button"
                                 onClick={saveNote}
                                 className="flex items-center gap-2 px-6 py-2.5 bg-stone-50 border border-stone-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:bg-stone-100 transition-all active:scale-95"
                             >
