@@ -114,7 +114,7 @@ const Home = ({ setShowGate }) => {
                         <span className="!text-[42px] md:!text-[72px] !font-semibold !text-indigo-600/90 !opacity-[0.9] -mt-2">scalable systems</span>
                         <KineticPhrase
                             text="& embodied practices."
-                            className="!text-[22px] md:!text-[34px] !font-light italic !text-stone-400 !opacity-[0.8] mt-3 !tracking-wide"
+                            className="!text-[22px] md:!text-[34px] !font-medium italic !text-red-500 !opacity-[0.9] mt-3 !tracking-wide"
                         />
                     </h1>
 
