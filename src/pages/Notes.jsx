@@ -27,6 +27,9 @@ const Notes = () => {
                 setNotes(data || []);
                 if (data && data.length > 0) {
                     handleSelectNote(data[0]);
+                } else if (data && data.length === 0 && user) {
+                    // Auto-create first note for new users
+                    createNote('My First Note ✨', 'Welcome to your private digital sanctuary.');
                 }
             }
             setLoading(false);
@@ -40,12 +43,14 @@ const Notes = () => {
         setContent(note.content);
     };
 
-    const createNote = async () => {
+    const createNote = async (defaultTitle = 'New Note', defaultContent = '') => {
+        if (!user) return;
+
         const newNote = {
-            title: 'New Note',
-            content: '',
+            title: defaultTitle,
+            content: defaultContent,
             user_id: user.id,
-            updated_at: new Date()
+            updated_at: new Date().toISOString()
         };
 
         const { data, error } = await supabase
@@ -54,7 +59,7 @@ const Notes = () => {
             .select();
 
         if (!error && data) {
-            setNotes([data[0], ...notes]);
+            setNotes(prev => [data[0], ...prev]);
             handleSelectNote(data[0]);
         }
     };
@@ -119,8 +124,8 @@ const Notes = () => {
     );
 
     return (
-        <div className="pt-40 pb-24 px-6 min-h-screen bg-white">
-            <div className="max-w-6xl mx-auto bg-stone-50 rounded-[3rem] border border-stone-200 shadow-2xl overflow-hidden flex min-h-[700px]">
+        <div className="pt-24 md:pt-40 pb-12 md:pb-24 px-4 md:px-6 min-h-screen bg-white">
+            <div className="max-w-6xl mx-auto bg-stone-50 rounded-2xl md:rounded-[3rem] border border-stone-200 shadow-xl md:shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[500px] md:min-h-[700px]">
                 {/* Sidebar */}
                 <div className="w-1/3 border-r border-stone-200 flex flex-col hidden md:flex">
                     <div className="p-8 border-b border-stone-100 flex items-center justify-between">
@@ -162,8 +167,8 @@ const Notes = () => {
                 </div>
 
                 {/* Editor Area */}
-                <div className="flex-1 p-12 flex flex-col bg-white">
-                    <div className="flex items-center justify-between mb-12 border-b border-stone-100 pb-8">
+                <div className="flex-1 p-6 md:p-12 flex flex-col bg-white">
+                    <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-stone-100 pb-6 md:pb-8">
                         <div className="flex items-center gap-3 text-stone-400 italic text-sm">
                             <Lock className="w-4 h-4 text-indigo-500" />
                             <span>Private studying notes</span>
@@ -178,28 +183,48 @@ const Notes = () => {
                             <button
                                 type="button"
                                 onClick={saveNote}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-stone-50 border border-stone-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:bg-stone-100 transition-all active:scale-95"
+                                className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 bg-stone-50 border border-stone-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:bg-stone-100 transition-all active:scale-95 whitespace-nowrap"
                             >
                                 {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                                Save Now
+                                <span className="hidden sm:inline">Save Now</span>
+                                <span className="sm:hidden">Save</span>
                             </button>
                         </div>
                     </div>
 
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Note Title..."
-                        className="text-4xl font-serif font-bold text-stone-900 focus:outline-none mb-8 placeholder:text-stone-200"
-                    />
+                    {activeNote ? (
+                        <>
+                            <input
+                                type="text"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Note Title..."
+                                className="text-2xl md:text-4xl font-serif font-bold text-stone-900 focus:outline-none mb-6 md:mb-8 placeholder:text-stone-200"
+                            />
 
-                    <textarea
-                        placeholder="Start typing your wisdom..."
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        className="flex-1 bg-transparent text-xl font-light text-stone-700 focus:outline-none resize-none leading-relaxed"
-                    />
+                            <textarea
+                                placeholder="Start typing your wisdom..."
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                className="flex-1 bg-transparent text-lg md:text-xl font-light text-stone-700 focus:outline-none resize-none leading-relaxed"
+                            />
+                        </>
+                    ) : (
+                        <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
+                            <div className="w-20 h-20 bg-stone-50 rounded-3xl flex items-center justify-center mb-6 border border-stone-100">
+                                <FileText className="w-10 h-10 text-stone-200" />
+                            </div>
+                            <h3 className="text-xl font-serif font-bold text-stone-900 mb-2">No Note Selected</h3>
+                            <p className="text-stone-500 font-light mb-8 max-w-xs">Create a new note or select one from the list to start writing.</p>
+                            <button
+                                onClick={() => createNote()}
+                                className="px-8 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all flex items-center gap-2"
+                            >
+                                <Plus className="w-5 h-5" />
+                                Create First Note
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
