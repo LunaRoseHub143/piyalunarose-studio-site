@@ -12,6 +12,8 @@ const Notes = () => {
     const [title, setTitle] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [lastSaved, setLastSaved] = useState(null);
+    const [error, setError] = useState(null);
 
     // Fetch notes
     useEffect(() => {
@@ -58,16 +60,25 @@ const Notes = () => {
     };
 
     const saveNote = async () => {
-        if (!activeNote) return;
+        if (!activeNote || !user) return;
         setSaving(true);
+        setError(null);
 
         const { error } = await supabase
             .from('private_notes')
-            .update({ title, content, updated_at: new Date() })
+            .update({
+                title,
+                content,
+                updated_at: new Date().toISOString()
+            })
             .eq('id', activeNote.id);
 
         if (!error) {
-            setNotes(notes.map(n => n.id === activeNote.id ? { ...n, title, content } : n));
+            setNotes(notes.map(n => n.id === activeNote.id ? { ...n, title, content, updated_at: new Date().toISOString() } : n));
+            setActiveNote({ ...activeNote, title, content });
+            setLastSaved(new Date());
+        } else {
+            setError(error.message);
         }
         setSaving(false);
     };
@@ -126,8 +137,8 @@ const Notes = () => {
                                 key={note.id}
                                 onClick={() => handleSelectNote(note)}
                                 className={`p-5 rounded-2xl cursor-pointer transition-all border ${activeNote?.id === note.id
-                                        ? 'bg-white border-indigo-200 shadow-lg ring-1 ring-indigo-500/5'
-                                        : 'hover:bg-stone-100 border-transparent'
+                                    ? 'bg-white border-indigo-200 shadow-lg ring-1 ring-indigo-500/5'
+                                    : 'hover:bg-stone-100 border-transparent'
                                     }`}
                             >
                                 <div className="flex justify-between items-start gap-3">
@@ -157,14 +168,17 @@ const Notes = () => {
                             <span>Private studying notes</span>
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className={`text-[10px] font-bold uppercase tracking-widest transition-opacity duration-500 ${saving ? 'text-indigo-500 opacity-100' : 'text-stone-300 opacity-0'}`}>
-                                Saving...
-                            </span>
+                            <div className="text-right flex flex-col items-end">
+                                <span className={`text-[10px] font-bold uppercase tracking-widest transition-opacity duration-500 ${saving ? 'text-indigo-500 opacity-100' : 'text-stone-300 opacity-100'}`}>
+                                    {saving ? 'Saving...' : lastSaved ? `Last saved ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
+                                </span>
+                                {error && <span className="text-[9px] text-red-500 font-medium">Error: {error}</span>}
+                            </div>
                             <button
                                 onClick={saveNote}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-stone-50 border border-stone-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:bg-stone-100"
+                                className="flex items-center gap-2 px-6 py-2.5 bg-stone-50 border border-stone-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:bg-stone-100 transition-all active:scale-95"
                             >
-                                <Save className="w-3.5 h-3.5" />
+                                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                                 Save Now
                             </button>
                         </div>

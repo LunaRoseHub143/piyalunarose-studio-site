@@ -48,7 +48,7 @@ const LibraryEditor = () => {
             content,
             category,
             author_id: user.id,
-            updated_at: new Date()
+            updated_at: new Date().toISOString()
         };
 
         let result;
