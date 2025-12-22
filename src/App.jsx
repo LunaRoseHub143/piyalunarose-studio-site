@@ -440,7 +440,7 @@ const App = () => {
       <footer className="py-24 px-6 border-t border-stone-100 relative z-10 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex items-center gap-5">
-            <Logo className="w-12 h-12 grayscale opacity-50" />
+            <Logo className="w-12 h-12" />
             <p className="text-stone-400 text-sm font-light tracking-[0.2em] uppercase">
               © {new Date().getFullYear()} Piya LunaRose Studio
             </p>
