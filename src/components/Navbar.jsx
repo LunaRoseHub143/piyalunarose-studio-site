@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, Instagram, LogOut, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -58,6 +59,26 @@ const Navbar = ({ scrolled }) => {
                             {item.name}
                         </Link>
                     ))}
+
+                    <div className="h-4 w-px bg-stone-200 mx-2" />
+
+                    {user ? (
+                        <button
+                            onClick={signOut}
+                            className="flex items-center gap-2 text-[10px] font-bold tracking-[0.3em] uppercase text-red-400 hover:text-red-600 transition-colors"
+                        >
+                            <LogOut className="w-3.5 h-3.5" />
+                            Sign Out
+                        </button>
+                    ) : (
+                        <Link
+                            to="/admin"
+                            className="p-2 text-stone-300 hover:text-stone-900 transition-colors"
+                            title="Admin Access"
+                        >
+                            <User className="w-4 h-4" />
+                        </Link>
+                    )}
 
                     <a
                         href="mailto:Hello@lunarosedhealinghub.com?subject=Project Inquiry"
