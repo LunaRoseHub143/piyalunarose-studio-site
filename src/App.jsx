@@ -17,7 +17,8 @@ import {
   DollarSign,
   TrendingUp,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Instagram
 } from 'lucide-react';
 import DecisionGate from './components/DecisionGate';
 import KineticPhrase from './components/KineticPhrase';
@@ -473,10 +474,15 @@ const App = () => {
               © {new Date().getFullYear()} Piya LunaRose Studio
             </p>
           </div>
-          <div className="flex gap-12">
-            {['LinkedIn', 'Twitter', 'Instagram'].map(social => (
-              <a key={social} href="#" className="text-stone-400 hover:text-stone-900 transition-colors text-[10px] font-bold tracking-[0.4em] uppercase">{social}</a>
-            ))}
+          <div className="flex gap-8">
+            <a
+              href="https://www.instagram.com/piyalunarose_studio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-stone-400 hover:text-stone-900 transition-all duration-300 hover:scale-110 active:scale-95"
+            >
+              <Instagram className="w-6 h-6" />
+            </a>
           </div>
         </div>
       </footer>
