@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -18,21 +20,35 @@ const Login = () => {
         navigate('/notes');
     }
 
-    const handleLogin = async (e) => {
+    const handleAuth = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setMessage(null);
 
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-
-        if (error) {
-            setError(error.message);
+        if (isSignUp) {
+            const { error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    emailRedirectTo: window.location.origin,
+                },
+            });
+            if (error) setError(error.message);
+            else setMessage('Success! Please check your email for a confirmation link.');
             setLoading(false);
         } else {
-            navigate('/notes');
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                setError(error.message);
+                setLoading(false);
+            } else {
+                navigate('/notes');
+            }
         }
     };
 
@@ -47,8 +63,12 @@ const Login = () => {
                     <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <Lock className="w-8 h-8 text-indigo-600" />
                     </div>
-                    <h1 className="text-3xl font-serif font-bold text-stone-900 mb-3 tracking-tight">Studio Access</h1>
-                    <p className="text-stone-500 font-light">Enter your credentials to manage the ecosystem.</p>
+                    <h1 className="text-3xl font-serif font-bold text-stone-900 mb-3 tracking-tight">
+                        {isSignUp ? 'Create Admin Account' : 'Studio Access'}
+                    </h1>
+                    <p className="text-stone-500 font-light">
+                        {isSignUp ? 'Set your password to manage the ecosystem.' : 'Enter your credentials to manage the ecosystem.'}
+                    </p>
                 </div>
 
                 {error && (
@@ -58,7 +78,14 @@ const Login = () => {
                     </div>
                 )}
 
-                <form onSubmit={handleLogin} className="space-y-6">
+                {message && (
+                    <div className="mb-8 p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center gap-3 text-emerald-600 text-sm">
+                        <CheckCircle2 className="w-5 h-5 shrink-0" />
+                        <p>{message}</p>
+                    </div>
+                )}
+
+                <form onSubmit={handleAuth} className="space-y-6">
                     <div>
                         <label className="block text-[10px] font-bold tracking-[0.2em] uppercase text-stone-400 mb-2 ml-1">Email Address</label>
                         <div className="relative">
@@ -97,10 +124,26 @@ const Login = () => {
                         {loading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
-                            <>Sign In <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" /></>
+                            <>
+                                {isSignUp ? 'Create Account' : 'Sign In'}
+                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                            </>
                         )}
                     </button>
                 </form>
+
+                <div className="mt-8 text-center">
+                    <button
+                        onClick={() => {
+                            setIsSignUp(!isSignUp);
+                            setError(null);
+                            setMessage(null);
+                        }}
+                        className="text-stone-400 hover:text-indigo-600 transition-colors text-xs font-medium"
+                    >
+                        {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Create one"}
+                    </button>
+                </div>
 
                 <div className="mt-10 pt-10 border-t border-stone-100 text-center">
                     <p className="text-stone-400 text-xs font-light">Piya LunaRose Studio • Private Admin Portal</p>
