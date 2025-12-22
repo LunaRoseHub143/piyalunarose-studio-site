@@ -19,6 +19,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import DecisionGate from './components/DecisionGate';
+import KineticPhrase from './components/KineticPhrase';
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -201,7 +202,10 @@ const App = () => {
           <h1 className="font-serif text-stone-900 !tracking-tight !leading-[1.1] mb-12 flex flex-col items-center">
             <span className="!text-[48px] md:!text-[84px] !font-bold !tracking-tighter">Architecting</span>
             <span className="!text-[42px] md:!text-[72px] !font-semibold !text-indigo-600/90 !opacity-[0.9] -mt-2">scalable systems</span>
-            <span className="!text-[22px] md:!text-[34px] !font-light italic !text-stone-400 !opacity-[0.7] mt-3 !tracking-wide">& embodied practices.</span>
+            <KineticPhrase
+              text="& embodied practices."
+              className="!text-[22px] md:!text-[34px] !font-light italic !text-stone-400 !opacity-[0.8] mt-3 !tracking-wide"
+            />
           </h1>
 
           <p className="text-xl md:text-2xl text-stone-600 max-w-2xl mx-auto mb-16 leading-relaxed font-light">
