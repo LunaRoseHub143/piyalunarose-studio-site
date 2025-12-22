@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   Code,
   Layers,
@@ -194,10 +195,14 @@ const App = () => {
       {/* Hero Section */}
       <section className="relative pt-40 pb-24 md:pt-60 md:pb-48 px-6 overflow-hidden z-10">
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/80 border border-stone-200 text-stone-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-12 shadow-sm backdrop-blur-sm">
+          <motion.div
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/80 border border-stone-200 text-stone-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-12 shadow-sm backdrop-blur-sm"
+          >
             <Zap className="w-4 h-4 text-indigo-500" />
             <span>Systems • Clarity • Resilience</span>
-          </div>
+          </motion.div>
 
           <h1 className="font-serif text-stone-900 !tracking-tight !leading-[1.1] mb-12 flex flex-col items-center">
             <span className="!text-[48px] md:!text-[84px] !font-bold !tracking-tighter">Architecting</span>
