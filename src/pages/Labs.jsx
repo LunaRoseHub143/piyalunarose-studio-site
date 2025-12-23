@@ -124,51 +124,139 @@ const Labs = () => {
             </section>
 
             {/* 3. SCROLLYTELLING SECTION */}
-            <section className="py-32 bg-white text-stone-900 rounded-[4rem] mx-4 md:mx-6 overflow-hidden">
+            <section className="py-32 bg-white text-stone-900 rounded-[4rem] mx-4 md:mx-6 overflow-hidden relative">
                 <div className="container mx-auto px-6">
-                    <div className="sticky top-40 h-screen flex items-center">
-                        <div className="grid md:grid-cols-2 gap-20 items-center">
-                            <div>
+                    <div className="sticky top-0 h-screen flex items-center">
+                        <div className="grid md:grid-cols-2 gap-20 items-center w-full">
+                            <div className="relative">
                                 <div className="flex items-center gap-2 text-indigo-600 font-bold tracking-widest uppercase text-[10px] mb-4">
                                     <Smartphone className="w-3 h-3" />
-                                    <span>02 / Narrative</span>
+                                    <span>02 / Origin Story</span>
                                 </div>
-                                <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 transition-all duration-700">Scrollytelling</h2>
-                                <p className="text-stone-600 font-light text-xl leading-relaxed">The art of passive interaction. Content unfolds as a dialogue between the user and the interface.</p>
+
+                                <div className="relative h-[400px]">
+                                    {/* Story Step 1: Frustration */}
+                                    <motion.div
+                                        style={{
+                                            opacity: useTransform(scrollYProgress, [0.3, 0.4, 0.45], [0, 1, 0]),
+                                            y: useTransform(scrollYProgress, [0.3, 0.4, 0.45], [20, 0, -20])
+                                        }}
+                                        className="absolute inset-0"
+                                    >
+                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 transition-all duration-700">The Friction</h2>
+                                        <p className="text-stone-600 font-light text-xl leading-relaxed">
+                                            Frustrated by booking platforms that overcharged but under-delivered quality, I felt the weight of inefficient systems holding back true healing work.
+                                        </p>
+                                    </motion.div>
+
+                                    {/* Story Step 2: Transformation */}
+                                    <motion.div
+                                        style={{
+                                            opacity: useTransform(scrollYProgress, [0.5, 0.6, 0.65], [0, 1, 0]),
+                                            y: useTransform(scrollYProgress, [0.5, 0.6, 0.65], [20, 0, -20])
+                                        }}
+                                        className="absolute inset-0"
+                                    >
+                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8">The Awakening</h2>
+                                        <p className="text-stone-600 font-light text-xl leading-relaxed">
+                                            Instead of waiting for a solution, I became one. I dove into the mechanics of product architecture to reclaim the standard of care.
+                                        </p>
+                                    </motion.div>
+
+                                    {/* Story Step 3: The Hook */}
+                                    <motion.div
+                                        style={{
+                                            opacity: useTransform(scrollYProgress, [0.7, 0.8], [0, 1]),
+                                            y: useTransform(scrollYProgress, [0.7, 0.8], [20, 0])
+                                        }}
+                                        className="absolute inset-0"
+                                    >
+                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 transition-all duration-700">The Architect</h2>
+                                        <p className="text-indigo-600 font-medium text-xl leading-relaxed">
+                                            Now, I am hooked. Building systems is no longer a necessity—it is an art of somatic resonance and digital flow.
+                                        </p>
+                                    </motion.div>
+                                </div>
                             </div>
+
                             <div className="relative h-[600px] flex items-center justify-center">
+                                {/* The Device */}
                                 <motion.div
                                     viewport={{ once: false }}
                                     initial={{ scale: 0.8, opacity: 0 }}
                                     whileInView={{ scale: 1, opacity: 1 }}
-                                    className="w-64 h-[500px] bg-stone-100 rounded-[3rem] border-8 border-white shadow-2xl relative overflow-hidden"
+                                    className="w-72 h-[550px] bg-stone-50 rounded-[3.5rem] border-[12px] border-stone-900 shadow-2xl relative overflow-hidden"
                                 >
-                                    <motion.div
-                                        style={{ height: useTransform(scrollYProgress, [0.4, 0.7], ["0%", "100%"]) }}
-                                        className="absolute top-0 left-0 right-0 bg-indigo-600/10 flex items-center justify-center overflow-hidden"
-                                    >
-                                        <div className="w-8 h-8 rounded-full bg-indigo-600 animate-pulse" />
-                                    </motion.div>
-                                    <div className="p-8 space-y-4">
-                                        <div className="h-2 w-20 bg-stone-200 rounded" />
-                                        <div className="h-2 w-32 bg-stone-200 rounded" />
-                                        <div className="h-32 w-full bg-stone-200 rounded-2xl" />
-                                        <div className="space-y-2">
-                                            <div className="h-2 w-full bg-stone-100 rounded" />
-                                            <div className="h-2 w-full bg-stone-100 rounded" />
-                                            <div className="h-2 w-2/3 bg-stone-100 rounded" />
-                                        </div>
+                                    {/* Device Screen Content - Dynamic based on scroll */}
+                                    <div className="p-8 h-full flex flex-col justify-between relative">
+                                        {/* Step 1 Content: Chaos */}
+                                        <motion.div
+                                            style={{ opacity: useTransform(scrollYProgress, [0.3, 0.45], [1, 0]) }}
+                                            className="space-y-6"
+                                        >
+                                            <div className="h-4 w-20 bg-red-100 rounded" />
+                                            <div className="h-64 w-full bg-stone-200 rounded-3xl animate-pulse" />
+                                            <div className="flex justify-between">
+                                                <div className="h-4 w-12 bg-stone-200 rounded" />
+                                                <div className="h-4 w-12 bg-red-400 rounded" />
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Step 2 Content: Architecture */}
+                                        <motion.div
+                                            style={{
+                                                opacity: useTransform(scrollYProgress, [0.45, 0.5, 0.65], [0, 1, 0]),
+                                                scale: useTransform(scrollYProgress, [0.45, 0.6], [0.8, 1])
+                                            }}
+                                            className="absolute inset-0 p-8 flex flex-col justify-center gap-4"
+                                        >
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="h-20 bg-indigo-100 rounded-2xl" />
+                                                <div className="h-20 bg-indigo-50 rounded-2xl" />
+                                                <div className="h-20 bg-stone-100 rounded-2xl" />
+                                                <div className="h-20 bg-indigo-600 rounded-2xl" />
+                                            </div>
+                                            <div className="h-4 w-full bg-stone-200 rounded" />
+                                            <div className="h-4 w-2/3 bg-stone-200 rounded" />
+                                        </motion.div>
+
+                                        {/* Step 3 Content: Flow */}
+                                        <motion.div
+                                            style={{
+                                                opacity: useTransform(scrollYProgress, [0.65, 0.75], [0, 1]),
+                                                y: useTransform(scrollYProgress, [0.65, 0.85], [100, 0])
+                                            }}
+                                            className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center"
+                                        >
+                                            <div className="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center text-white mb-6 shadow-xl shadow-indigo-600/30">
+                                                <Sparkles className="w-10 h-10" />
+                                            </div>
+                                            <div className="h-2 w-16 bg-indigo-200 rounded mb-4" />
+                                            <div className="h-2 w-32 bg-indigo-600 rounded" />
+                                        </motion.div>
                                     </div>
+
+                                    {/* Interactive Scroll Bar */}
+                                    <motion.div
+                                        style={{ height: useTransform(scrollYProgress, [0.3, 0.8], ["0%", "100%"]) }}
+                                        className="absolute top-0 right-0 w-1.5 bg-indigo-600"
+                                    />
                                 </motion.div>
+
+                                {/* Floating Elements */}
                                 <motion.div
                                     style={{ y: useTransform(scrollYProgress, [0.4, 0.7], [50, -50]) }}
-                                    className="absolute -right-10 top-1/4 w-32 h-32 bg-indigo-100 rounded-3xl -rotate-12 blur-sm scale-150"
+                                    className="absolute -right-10 top-1/4 w-32 h-32 bg-indigo-50 rounded-full blur-3xl opacity-50"
+                                />
+                                <motion.div
+                                    style={{ y: useTransform(scrollYProgress, [0.5, 0.8], [-50, 50]) }}
+                                    className="absolute -left-12 bottom-1/4 w-40 h-40 bg-purple-50 rounded-full blur-3xl opacity-50"
                                 />
                             </div>
                         </div>
                     </div>
-                    {/* Spacer for scroll height */}
-                    <div className="h-[200vh]" />
+                    {/* Spacer for scroll height to allow storytelling to breathe */}
+                    <div className="h-[300vh]" />
                 </div>
             </section>
 
