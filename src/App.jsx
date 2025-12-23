@@ -53,7 +53,7 @@ const App = () => {
         <div className="absolute inset-0 !bg-[#0f121e]/[0.15]" />
       </div>
 
-      <Navbar scrolled={scrolled} />
+      <Navbar scrolled={scrolled} setShowGate={setShowGate} />
 
       <main className="relative z-10">
         <Routes>

@@ -16,19 +16,24 @@ import {
     ExternalLink,
     X
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const DecisionGate = ({ isOpen, onClose }) => {
     const [step, setStep] = useState(1);
     const [answers, setAnswers] = useState({});
     const [isResultOpen, setIsResultOpen] = useState(false);
+    const [outcome, setOutcome] = useState(null); // { status: 'NotFit' | 'Standard' | 'FastTrack', reason: string, score: number }
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
 
     // Load progress from localStorage
     useEffect(() => {
         const saved = localStorage.getItem('piya_decision_gate_progress');
         if (saved) {
-            const { step: savedStep, answers: savedAnswers } = JSON.parse(saved);
-            // Only set if not already completed/in results view
-            if (!isResultOpen) {
+            const { step: savedStep, answers: savedAnswers, timestamp } = JSON.parse(saved);
+            // Expire after 24 hours
+            const isExpired = Date.now() - (timestamp || 0) > 24 * 60 * 60 * 1000;
+            if (!isExpired && !isResultOpen) {
                 setStep(savedStep || 1);
                 setAnswers(savedAnswers || {});
             }
@@ -37,33 +42,100 @@ const DecisionGate = ({ isOpen, onClose }) => {
 
     // Save progress to localStorage
     useEffect(() => {
-        if (!isResultOpen) {
-            localStorage.setItem('piya_decision_gate_progress', JSON.stringify({ step, answers }));
+        if (!isResultOpen && step !== 1) {
+            localStorage.setItem('piya_decision_gate_progress', JSON.stringify({
+                step,
+                answers,
+                timestamp: Date.now()
+            }));
         }
     }, [step, answers, isResultOpen]);
 
     if (!isOpen) return null;
 
     const resetGate = () => {
+        if (Object.keys(answers).length > 0 && !isResultOpen) {
+            if (!confirm("Exit and lose your progress?")) return;
+        }
         setStep(1);
         setAnswers({});
         setIsResultOpen(false);
+        setOutcome(null);
+        setSubmitSuccess(false);
         localStorage.removeItem('piya_decision_gate_progress');
     };
 
     const handleChoice = (key, value, nextStep) => {
-        setAnswers(prev => ({ ...prev, [key]: value }));
+        const updatedAnswers = { ...answers, [key]: value };
+        setAnswers(updatedAnswers);
+
         if (nextStep === 'RESULTS') {
+            const result = calculateOutcome(updatedAnswers);
+            setOutcome(result);
             setIsResultOpen(true);
-            // Track completion
-            console.log('Gate Completed:', { ...answers, [key]: value });
+            localStorage.removeItem('piya_decision_gate_progress');
         } else {
             setStep(nextStep);
         }
     };
 
+    const calculateOutcome = (a) => {
+        const buildType = a.projectType;
+        const budget = a.budget;
+        const timeline = a.launch;
+        const payments = a.needsPayments === 'Yes, users pay inside the system';
+        const requirements = a.requirements;
+
+        // 1. NOT FIT (YET)
+        // Non-negotiable: Full Platform requires 10k+ and 6+ weeks
+        if (buildType === 'A full web platform (many features)') {
+            if (budget !== '$10,000+' || timeline !== 'Planned (6+ weeks)') {
+                return {
+                    status: 'NotFit',
+                    score: 35,
+                    reason: 'Scope-to-budget mismatch',
+                    details: 'Full web platforms require high-security integrations and architectural depth that necessitate a larger budget and longer timeline.'
+                };
+            }
+        }
+
+        // Unrealistic combos (ASAP + Payments + Low Budget)
+        if (payments && timeline === 'As soon as possible (1–2 weeks)' && budget === 'Under $2,000') {
+            return {
+                status: 'NotFit',
+                score: 25,
+                reason: 'Timeline too aggressive for payments',
+                details: 'Integrating secure payment systems responsibly is not feasible within a 1-2 week window on a limited budget.'
+            };
+        }
+
+        // 2. FAST TRACK (BOOK)
+        if (budget === '$10,000+' && timeline === 'Planned (6+ weeks)') {
+            if (buildType === 'A full web platform (many features)') {
+                return {
+                    status: 'FastTrack',
+                    score: 95,
+                    reason: 'Meets Full Platform requirements'
+                };
+            }
+            if (buildType === 'A login portal (users sign in)' && (requirements === 'Yes, I have content and requirements' || requirements === 'Somewhat (rough notes)')) {
+                return {
+                    status: 'FastTrack',
+                    score: 90,
+                    reason: 'High-alignment Project'
+                };
+            }
+        }
+
+        // 3. STANDARD (APPLY) - Default
+        return {
+            status: 'Standard',
+            score: 70,
+            reason: 'Suitable for Standard Review'
+        };
+    };
+
     const goBack = () => {
-        // Logic for complex routing
         if (step === 3) {
             if (answers.projectType === 'A public website (no login)') setStep('2A');
             else if (answers.projectType === 'A login portal (users sign in)') setStep('2B');
@@ -75,60 +147,33 @@ const DecisionGate = ({ isOpen, onClose }) => {
         }
     };
 
-    // ---------------------------------------------------------------------------
-    // Classification Logic
-    // ---------------------------------------------------------------------------
-    const getResults = () => {
-        const category = answers.projectType === 'A public website (no login)' ? 'Public Website'
-            : answers.projectType === 'A login portal (users sign in)' ? 'Login Portal'
-                : 'Full Platform';
+    const handleApplySubmit = async (formData) => {
+        setIsSubmitting(true);
+        try {
+            const { error } = await supabase.from('leads').insert([{
+                name: formData.name,
+                email: formData.email,
+                one_sentence_description: formData.description,
+                build_type: answers.projectType,
+                features: answers.subGoal ? [answers.subGoal] : [],
+                payments_required: answers.needsPayments === 'Yes, users pay inside the system',
+                timeline: answers.launch,
+                requirements_status: answers.requirements,
+                budget_range: answers.budget,
+                outcome: outcome.status,
+                outcome_reason: outcome.reason,
+                raw_answers: answers
+            }]);
 
-        const flags = {
-            needsLogin: answers.projectType !== 'A public website (no login)',
-            needsDataStorage: answers.projectType !== 'A public website (no login)' || answers.subGoal === 'Contact + quote request funnel',
-            needsPayments: answers.needsPayments === 'Yes, users pay inside the system',
-            needsBooking: answers.subGoal === 'Book appointments / manage bookings' || answers.subGoal === 'Bookings and scheduling',
-            needsMessagingOrFiles: answers.subGoal === 'Message / upload files / shared workspace',
-            multiBusiness: answers.subGoal === 'Multi-business or multi-location system'
-        };
-
-        const budget = answers.budget;
-        const requirements = answers.requirements;
-        const launch = answers.launch;
-
-        let path = 'Request a Quote'; // Default
-
-        // Rule 1 & 2: Budget under $2000
-        if (budget === 'Under $2,000') {
-            if (category === 'Full Platform' || flags.needsPayments) {
-                path = 'DIY Resources';
-            } else {
-                path = 'DIY Resources'; // Broad filter for under $2000 if complexity is moderate
-            }
+            if (error) throw error;
+            setSubmitSuccess(true);
+        } catch (err) {
+            console.error('Lead submission failed:', err);
+            alert('Something went wrong. Please try again or email me directly.');
+        } finally {
+            setIsSubmitting(false);
         }
-
-        // Rule 3: Budget $2000-$10000 + Public/Portal
-        if (budget === '$2,000–$10,000' && (category === 'Public Website' || category === 'Login Portal')) {
-            path = 'Request a Quote';
-        }
-
-        // Rule 4: $10,000+ or Full Platform
-        if (budget === '$10,000+' || category === 'Full Platform') {
-            path = 'Apply';
-        }
-
-        // Rule 5: Help defining + ASAP
-        if (requirements === 'No, I need help defining it' && launch === 'As soon as possible (1–2 weeks)') {
-            path = 'Request a Quote';
-        }
-
-        // Generate Summary Text
-        const summary = `You’re building a ${category} ${answers.subGoal ? `focused on ${answers.subGoal.toLowerCase()}` : ''}. ${flags.needsPayments ? 'Payments are required.' : 'No internal payments needed.'} Your launch window is ${launch?.toLowerCase()}, and you have ${requirements?.toLowerCase()}. Recommended next step: ${path}.`;
-
-        return { path, category, flags, summary };
     };
-
-    const results = isResultOpen ? getResults() : null;
 
     // ---------------------------------------------------------------------------
     // Render Helpers
@@ -274,113 +319,202 @@ const DecisionGate = ({ isOpen, onClose }) => {
         }
     };
 
+    const StandardApplyForm = ({ onSubmit }) => {
+        const [formData, setFormData] = useState({ name: '', email: '', description: '' });
+        return (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom duration-500">
+                <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-2 ml-1">Your Name</label>
+                    <input
+                        required
+                        type="text"
+                        value={formData.name}
+                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                        placeholder="e.g. Piya Phunsawat"
+                    />
+                </div>
+                <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-2 ml-1">Email Address</label>
+                    <input
+                        required
+                        type="email"
+                        value={formData.email}
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                        placeholder="hello@example.com"
+                    />
+                </div>
+                <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-2 ml-1">Project in one sentence</label>
+                    <textarea
+                        required
+                        value={formData.description}
+                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                        className="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all min-h-[100px]"
+                        placeholder="A platform for somatic practitioners to manage high-end retreats..."
+                    />
+                </div>
+                <button
+                    disabled={isSubmitting}
+                    onClick={() => onSubmit(formData)}
+                    className="w-full p-6 bg-stone-900 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-stone-800 disabled:opacity-50 transition-all shadow-xl shadow-stone-900/10"
+                >
+                    {isSubmitting ? <RefreshCw className="w-5 h-5 animate-spin" /> : 'Submit Application'} <ArrowRight className="w-5 h-5" />
+                </button>
+            </div>
+        );
+    };
+
     const renderResults = () => {
-        if (!results) return null;
+        if (!isResultOpen || !outcome) return null;
 
-        const { path, summary } = results;
+        const { status, score, reason, details } = outcome;
 
-        const ResultLayout = ({ headline, icon: Icon, children, mainAction, actionText, actionLink }) => (
+        const ResultCard = ({ title, icon: Icon, children, colorClass = "text-indigo-600", bgClass = "bg-indigo-50", borderClass = "border-indigo-600" }) => (
             <div className="bg-white rounded-[3rem] shadow-2xl shadow-indigo-500/10 border border-stone-200 w-full max-w-2xl relative overflow-hidden animate-in slide-in-from-bottom duration-700">
-                <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600" />
+                <div className={`absolute top-0 left-0 w-full h-2 ${status === 'NotFit' ? 'bg-amber-400' : 'bg-indigo-600'}`} />
                 <div className="p-10 md:p-14">
-                    <div className="mb-10 inline-block p-4 bg-indigo-50 rounded-3xl">
-                        <Icon className="w-10 h-10 text-indigo-600" />
+                    <div className="flex justify-between items-start mb-10">
+                        <div className={`p-4 ${bgClass} rounded-3xl`}>
+                            <Icon className={`w-10 h-10 ${colorClass}`} />
+                        </div>
+                        <div className="text-right">
+                            <span className="block text-[10px] font-bold tracking-[0.4em] text-stone-400 uppercase mb-2">Alignment Score</span>
+                            <span className={`text-4xl font-serif font-bold ${colorClass}`}>{score}</span>
+                        </div>
                     </div>
 
-                    <span className="block text-[10px] font-bold tracking-[0.4em] text-stone-400 uppercase mb-4">Recommended Next Step</span>
-                    <h2 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-8">{headline}</h2>
-
-                    <div className="bg-stone-50 rounded-3xl p-8 mb-10 border border-stone-100">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-stone-400 mb-4">Summary</h4>
-                        <p className="text-stone-700 font-light leading-relaxed text-lg">{summary}</p>
+                    <div className="mb-8">
+                        <span className="block text-[10px] font-bold tracking-[0.4em] text-stone-400 uppercase mb-2">Reason: {reason}</span>
+                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-6 leading-tight">{title}</h2>
                     </div>
 
-                    <div className="mb-12">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-stone-400 mb-6">Preparation Checklist</h4>
-                        <ul className="space-y-4">
+                    {submitSuccess ? (
+                        <div className="text-center py-10 animate-in fade-in zoom-in duration-500">
+                            <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle2 className="w-10 h-10" />
+                            </div>
+                            <h3 className="text-2xl font-serif font-bold text-stone-900 mb-4">Application Sent</h3>
+                            <p className="text-stone-500 font-light mb-8">I've received your details. Expect a personal response within 48 hours.</p>
+                            <button onClick={resetGate} className="px-8 py-3 bg-stone-900 text-white font-bold rounded-full hover:scale-105 transition-all">Done</button>
+                        </div>
+                    ) : (
+                        <div className="space-y-10">
                             {children}
-                        </ul>
-                    </div>
 
-                    {mainAction && (
-                        <a
-                            href={actionLink || `mailto:Hello@lunarosedhealinghub.com?subject=${path}`}
-                            className="w-full flex items-center justify-center gap-3 p-6 bg-stone-900 text-white font-bold rounded-2xl hover:bg-stone-800 transition-all hover:scale-[1.02] shadow-xl shadow-stone-900/10 mb-6"
-                        >
-                            {actionText} <ArrowRight className="w-5 h-5" />
-                        </a>
+                            <button
+                                onClick={resetGate}
+                                className="w-full p-4 border border-stone-100 text-stone-400 text-xs font-bold uppercase tracking-widest rounded-xl hover:text-stone-900 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <RefreshCw className="w-3 h-3" /> Restart Decision Gate
+                            </button>
+                        </div>
                     )}
-
-                    <button
-                        onClick={resetGate}
-                        className="w-full p-6 bg-white border border-stone-200 text-stone-600 font-bold rounded-2xl hover:bg-stone-50 transition-all flex items-center justify-center gap-2"
-                    >
-                        <RefreshCw className="w-4 h-4" /> Restart Decision Gate
-                    </button>
                 </div>
             </div>
         );
 
-        if (path === 'Apply') {
+        if (status === 'NotFit') {
             return (
-                <ResultLayout
-                    headline="High-alignment build"
-                    icon={Zap}
-                    mainAction
-                    actionText="Apply Now"
-                    actionLink="mailto:Hello@lunarosedhealinghub.com?subject=Application for High-Alignment Build"
-                >
-                    <li className="flex gap-4 text-stone-600"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Full business vision and goal mapping</li>
-                    <li className="flex gap-4 text-stone-600"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Detailed feature list or user stories</li>
-                    <li className="flex gap-4 text-stone-600"><CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> Branding assets (logo, colors, fonts)</li>
-                </ResultLayout>
+                <ResultCard title="Not a fit (yet), but here are your next steps" icon={ShieldCheck} colorClass="text-amber-500" bgClass="bg-amber-50">
+                    <div className="space-y-8">
+                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                            {details}
+                        </p>
+
+                        {answers.projectType === 'A full web platform (many features)' && (
+                            <div className="p-6 bg-stone-50 rounded-2xl border border-stone-100">
+                                <h4 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-4">Full Platform Requirements</h4>
+                                <ul className="space-y-3">
+                                    <li className="flex items-center gap-3 text-sm font-medium">
+                                        {answers.budget === '$10,000+' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <X className="w-4 h-4 text-red-500" />}
+                                        <span className={answers.budget === '$10,000+' ? 'text-stone-900' : 'text-stone-400'}>Budget: $10,000+</span>
+                                    </li>
+                                    <li className="flex items-center gap-3 text-sm font-medium">
+                                        {answers.launch === 'Planned (6+ weeks)' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <X className="w-4 h-4 text-red-500" />}
+                                        <span className={answers.launch === 'Planned (6+ weeks)' ? 'text-stone-900' : 'text-stone-400'}>Timeline: 6+ weeks</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 gap-4">
+                            <button
+                                onClick={() => setStep(1)}
+                                className="w-full p-6 bg-indigo-50 text-indigo-700 font-bold rounded-2xl border border-indigo-100 hover:bg-indigo-100 transition-all text-left flex items-center justify-between group"
+                            >
+                                <span>Reduce scope (MVP)</span>
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                            <a
+                                href="mailto:Hello@lunarosedhealinghub.com?subject=DIY Coaching Inquiry"
+                                className="w-full p-6 border border-stone-200 text-stone-700 font-bold rounded-2xl hover:bg-stone-50 transition-all text-left flex items-center justify-between group"
+                            >
+                                <span>DIY with coaching</span>
+                                <ExternalLink className="w-5 h-5 text-stone-300 group-hover:text-stone-900" />
+                            </a>
+                        </div>
+                    </div>
+                </ResultCard>
             );
         }
 
-        if (path === 'Request a Quote') {
+        if (status === 'FastTrack') {
             return (
-                <ResultLayout
-                    headline="Scoped build"
-                    icon={Layers}
-                    mainAction
-                    actionText="Request a Quote"
-                    actionLink="mailto:Hello@lunarosedhealinghub.com?subject=Quote Request for Scoped Build"
-                >
-                    <li className="flex gap-4 text-stone-600"><CheckCircle2 className="w-5 h-5 text-indigo-500 shrink-0" /> Page-by-page content outlines</li>
-                    <li className="flex gap-4 text-stone-600"><CheckCircle2 className="w-5 h-5 text-indigo-500 shrink-0" /> Reference sites or design inspiration</li>
-                    <li className="flex gap-4 text-stone-600"><CheckCircle2 className="w-5 h-5 text-indigo-500 shrink-0" /> Desired functional requirements</li>
-                </ResultLayout>
+                <ResultCard title="Fast Track: Book a Discovery Call" icon={Zap}>
+                    <div className="space-y-8">
+                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                            Your project is highly aligned with my expertise and systems. Let's move straight to a roadmap discussion.
+                        </p>
+
+                        <div className="flex flex-col gap-4">
+                            <a
+                                href="BOOKING_URL_HERE"
+                                target="_blank"
+                                className="w-full p-6 bg-indigo-600 text-white font-bold rounded-2xl text-center shadow-xl shadow-indigo-600/20 hover:scale-[1.02] transition-all"
+                            >
+                                Book Roadmap Call
+                            </a>
+                            <button
+                                onClick={() => setOutcome({ ...outcome, status: 'Standard' })}
+                                className="text-stone-400 text-sm font-bold uppercase tracking-widest hover:text-stone-900 p-2"
+                            >
+                                Apply instead
+                            </button>
+                        </div>
+                    </div>
+                </ResultCard>
             );
         }
 
-        // DIY Resources path
+        // Standard Build (Apply)
         return (
-            <ResultLayout headline="Best next step: DIY path" icon={ShieldCheck}>
-                <div className="space-y-6">
-                    <p className="text-stone-500 font-light italic text-sm mb-4">You're in a great planning phase. These resources will help you move forward:</p>
-                    <a href="#" className="flex items-center justify-between p-4 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 transition-colors group">
-                        <span className="font-medium text-stone-800">How to choose your tech stack</span>
-                        <ExternalLink className="w-4 h-4 text-stone-300 group-hover:text-indigo-500" />
-                    </a>
-                    <a href="#" className="flex items-center justify-between p-4 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 transition-colors group">
-                        <span className="font-medium text-stone-800">How to write clear requirements</span>
-                        <ExternalLink className="w-4 h-4 text-stone-300 group-hover:text-indigo-500" />
-                    </a>
-                    <a href="#" className="flex items-center justify-between p-4 bg-white border border-stone-100 rounded-xl hover:border-indigo-200 transition-colors group">
-                        <span className="font-medium text-stone-800">Page planning for clarity</span>
-                        <ExternalLink className="w-4 h-4 text-stone-300 group-hover:text-indigo-500" />
-                    </a>
+            <ResultCard title="Next step: Review & Apply" icon={Layers}>
+                <div className="space-y-10">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 bg-stone-50 rounded-xl border border-stone-100">
+                            <span className="block text-[8px] font-bold uppercase tracking-[.2em] text-stone-400 mb-1">Build Type</span>
+                            <span className="text-xs font-semibold text-stone-900">{answers.projectType?.split('(')[0]}</span>
+                        </div>
+                        <div className="p-4 bg-stone-50 rounded-xl border border-stone-100">
+                            <span className="block text-[8px] font-bold uppercase tracking-[.2em] text-stone-400 mb-1">Budget</span>
+                            <span className="text-xs font-semibold text-stone-900">{answers.budget}</span>
+                        </div>
+                    </div>
+
+                    <StandardApplyForm onSubmit={handleApplySubmit} />
                 </div>
-            </ResultLayout>
+            </ResultCard>
         );
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/40 backdrop-blur-3xl animate-in fade-in duration-500 overflow-y-auto">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-stone-900/40 backdrop-blur-3xl animate-in fade-in duration-500 overflow-y-auto">
             <div className="absolute top-10 right-10 z-[110]">
                 <button
                     onClick={onClose}
-                    className="p-4 bg-white shadow-xl shadow-stone-900/5 border border-stone-200 rounded-full hover:scale-110 transition-all text-stone-400 hover:text-stone-900"
+                    className="p-4 bg-white/10 backdrop-blur-md shadow-xl border border-white/10 rounded-full hover:scale-110 transition-all text-white/60 hover:text-white"
                 >
                     <X className="w-6 h-6" />
                 </button>

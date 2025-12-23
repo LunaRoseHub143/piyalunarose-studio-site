@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
 
-const Navbar = ({ scrolled }) => {
+const Navbar = ({ scrolled, setShowGate }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
     const { user, signOut } = useAuth();
@@ -23,6 +23,11 @@ const Navbar = ({ scrolled }) => {
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
         }
+    };
+
+    const handleOpenGate = () => {
+        setIsMenuOpen(false);
+        setShowGate(true);
     };
 
     return (
@@ -80,12 +85,12 @@ const Navbar = ({ scrolled }) => {
                         </Link>
                     )}
 
-                    <a
-                        href="mailto:Hello@lunarosedhealinghub.com?subject=Project Inquiry"
+                    <button
+                        onClick={handleOpenGate}
                         className="ml-4 px-6 py-2.5 bg-stone-900 text-white text-[10px] font-bold tracking-widest uppercase rounded-full hover:bg-stone-800 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-stone-900/10"
                     >
                         Request a Quote
-                    </a>
+                    </button>
                 </div>
 
                 {/* Mobile Toggle */}
@@ -98,7 +103,7 @@ const Navbar = ({ scrolled }) => {
             </div>
 
             {/* Mobile Menu */}
-            <div className={`fixed inset-0 bg-white/95 backdrop-blur-2xl z-40 transform transition-transform duration-500 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden flex flex-col items-center justify-center p-10`}>
+            <div className={`fixed inset-0 bg-white/98 backdrop-blur-3xl z-40 transform transition-transform duration-500 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden flex flex-col items-center justify-center p-10`}>
                 <div className="flex flex-col items-center gap-8 text-center">
                     {isHome && ['Services', 'Work', 'About'].map((item) => (
                         <button
@@ -123,12 +128,12 @@ const Navbar = ({ scrolled }) => {
                         </Link>
                     ))}
 
-                    <a
-                        href="mailto:Hello@lunarosedhealinghub.com?subject=Project Inquiry"
+                    <button
+                        onClick={handleOpenGate}
                         className="mt-6 px-10 py-4 bg-stone-900 text-white font-bold rounded-2xl shadow-xl w-full"
                     >
                         Request a Quote
-                    </a>
+                    </button>
                 </div>
             </div>
         </nav>

@@ -123,12 +123,12 @@ const Home = ({ setShowGate }) => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
-                        <a
-                            href="mailto:Hello@lunarosedhealinghub.com?subject=Project Inquiry"
+                        <button
+                            onClick={() => setShowGate(true)}
                             className="w-full sm:w-auto px-12 py-5 bg-stone-900 text-white font-bold rounded-2xl hover:bg-stone-800 transition-all hover:scale-105 hover:shadow-2xl hover:shadow-stone-900/20 flex items-center justify-center gap-3 group"
                         >
                             Request a Quote <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                        </a>
+                        </button>
                         <button
                             onClick={() => scrollToSection('work')}
                             className="w-full sm:w-auto px-12 py-5 bg-white border border-stone-200 text-stone-900 font-bold rounded-2xl hover:bg-stone-50 hover:border-stone-400 transition-all shadow-sm"
