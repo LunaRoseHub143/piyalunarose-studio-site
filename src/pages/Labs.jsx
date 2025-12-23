@@ -157,13 +157,13 @@ const Labs = () => {
                                     {/* Story Step 1: Frustration */}
                                     <motion.div
                                         style={{
-                                            opacity: useTransform(scrollYProgress, [0.3, 0.4, 0.45], [0, 1, 0]),
-                                            y: useTransform(scrollYProgress, [0.3, 0.4, 0.45], [20, 0, -20])
+                                            opacity: useTransform(scrollYProgress, [0.25, 0.35, 0.45, 0.5], [0, 1, 1, 0]),
+                                            y: useTransform(scrollYProgress, [0.25, 0.35, 0.45, 0.5], [40, 0, 0, -40])
                                         }}
                                         className="absolute inset-0"
                                     >
-                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 transition-all duration-700">The Friction</h2>
-                                        <p className="text-stone-600 font-light text-xl leading-relaxed">
+                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 text-stone-900">The Friction</h2>
+                                        <p className="text-stone-800 font-normal text-xl md:text-2xl leading-relaxed">
                                             Frustrated by booking platforms that overcharged but under-delivered quality, I felt the weight of inefficient systems holding back true healing work.
                                         </p>
                                     </motion.div>
@@ -171,13 +171,13 @@ const Labs = () => {
                                     {/* Story Step 2: Transformation */}
                                     <motion.div
                                         style={{
-                                            opacity: useTransform(scrollYProgress, [0.5, 0.6, 0.65], [0, 1, 0]),
-                                            y: useTransform(scrollYProgress, [0.5, 0.6, 0.65], [20, 0, -20])
+                                            opacity: useTransform(scrollYProgress, [0.55, 0.65, 0.7, 0.75], [0, 1, 1, 0]),
+                                            y: useTransform(scrollYProgress, [0.55, 0.65, 0.7, 0.75], [40, 0, 0, -40])
                                         }}
                                         className="absolute inset-0"
                                     >
-                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8">The Awakening</h2>
-                                        <p className="text-stone-600 font-light text-xl leading-relaxed">
+                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 text-stone-900">The Awakening</h2>
+                                        <p className="text-stone-800 font-normal text-xl md:text-2xl leading-relaxed">
                                             Instead of waiting for a solution, I became one. I dove into the mechanics of product architecture to reclaim the standard of care.
                                         </p>
                                     </motion.div>
@@ -185,13 +185,13 @@ const Labs = () => {
                                     {/* Story Step 3: The Hook */}
                                     <motion.div
                                         style={{
-                                            opacity: useTransform(scrollYProgress, [0.7, 0.8], [0, 1]),
-                                            y: useTransform(scrollYProgress, [0.7, 0.8], [20, 0])
+                                            opacity: useTransform(scrollYProgress, [0.8, 0.9], [0, 1]),
+                                            y: useTransform(scrollYProgress, [0.8, 0.9], [40, 0])
                                         }}
                                         className="absolute inset-0"
                                     >
-                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 transition-all duration-700">The Architect</h2>
-                                        <p className="text-indigo-600 font-medium text-xl leading-relaxed">
+                                        <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 text-indigo-700">The Architect</h2>
+                                        <p className="text-indigo-600 font-bold text-xl md:text-2xl leading-relaxed">
                                             Now, I am hooked. Building systems is no longer a necessity—it is an art of somatic resonance and digital flow.
                                         </p>
                                     </motion.div>
