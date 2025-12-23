@@ -6,21 +6,22 @@ import {
     Activity,
     Flame,
     Zap,
+    Sparkles,
     ArrowRight,
     CheckCircle2,
     Quote
 } from 'lucide-react';
 import KineticPhrase from '../components/KineticPhrase';
 
-const ServiceCard = ({ icon: Icon, title, description, tags, points }) => (
-    <div className="bg-white/60 backdrop-blur-md p-8 rounded-3xl border border-stone-200 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 group">
-        <div className="mb-6 inline-block p-3 bg-indigo-50 rounded-2xl group-hover:bg-indigo-100 transition-colors">
+const ServiceCard = ({ icon: Icon, title, description, tags, points, footerText, badge }) => (
+    <div className="bg-white/60 backdrop-blur-md p-8 rounded-3xl border border-stone-200 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 group flex flex-col h-full">
+        <div className="mb-6 inline-block p-3 bg-indigo-50 rounded-2xl group-hover:bg-indigo-100 transition-colors shrink-0 max-w-fit">
             <Icon className="w-8 h-8 text-indigo-600 group-hover:text-indigo-700 transition-colors" />
         </div>
         <h3 className="text-xl font-serif font-bold text-stone-900 mb-3 tracking-tight">{title}</h3>
         <p className="text-stone-600 mb-6 leading-relaxed font-light">{description}</p>
 
-        <ul className="mb-6 space-y-3">
+        <ul className="mb-6 space-y-3 flex-grow">
             {points.map((point, idx) => (
                 <li key={idx} className="flex items-start text-sm text-stone-700">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 mr-2 mt-0.5 shrink-0" />
@@ -29,12 +30,25 @@ const ServiceCard = ({ icon: Icon, title, description, tags, points }) => (
             ))}
         </ul>
 
-        <div className="flex flex-wrap gap-2 pt-4 border-t border-stone-100">
-            {tags.map((tag, idx) => (
-                <span key={idx} className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
-                    {tag}
+        {footerText && (
+            <p className="text-[11px] text-stone-400 italic mb-6 leading-relaxed border-l-2 border-indigo-100 pl-4 py-1">
+                {footerText}
+            </p>
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-100">
+            <div className="flex flex-wrap gap-2">
+                {tags.map((tag, idx) => (
+                    <span key={idx} className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">
+                        {tag}
+                    </span>
+                ))}
+            </div>
+            {badge && (
+                <span className="text-[9px] font-bold uppercase tracking-tighter text-indigo-400/60">
+                    {badge}
                 </span>
-            ))}
+            )}
         </div>
     </div>
 );
@@ -176,16 +190,18 @@ const Home = ({ setShowGate }) => {
                         />
 
                         <ServiceCard
-                            icon={Activity}
-                            title="Resilience Training"
-                            description="Applying martial arts principles to build discipline and mental focus under stress."
+                            icon={Sparkles}
+                            title="Bodywork Practitioner Training"
+                            description="Small-group instruction for licensed bodywork therapists (and dedicated learners) focused on technique, flow, and client safety."
                             points={[
-                                "Progressive adaptation",
-                                "Discipline without burnout",
-                                "Coordination & balance",
-                                "Mental stress management"
+                                "Hands-on technique + pressure control",
+                                "Body mechanics + therapist longevity",
+                                "Session flow + nervous system pacing",
+                                "Communication, consent, and boundaries"
                             ]}
-                            tags={["Movement", "Boxing", "Flow"]}
+                            tags={["TRAINING", "THERAPISTS", "HANDS-ON"]}
+                            footerText="I teach by demonstrating on one student while coaching the group."
+                            badge="Group-only: 2–4 students (no 1:1)."
                         />
 
                         <ServiceCard
