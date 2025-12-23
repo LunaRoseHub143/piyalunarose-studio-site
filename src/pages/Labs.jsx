@@ -236,8 +236,20 @@ const Labs = () => {
                 <h3 className="text-3xl font-serif font-bold mb-4">Want more depth?</h3>
                 <p className="text-stone-500 mb-12 max-w-lg mx-auto">This playground is constantly evolving. I update it with every new system implementation.</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all">Request a Showcase</button>
-                    <button className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white/10 transition-all">View Github</button>
+                    <a
+                        href="mailto:Hello@lunarosedhealinghub.com?subject=Labs Showcase Inquiry"
+                        className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all hover:scale-105 active:scale-95"
+                    >
+                        Request a Showcase
+                    </a>
+                    <a
+                        href="https://github.com/LunaRoseHub143/piyalunarose-studio-site"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white/10 transition-all hover:scale-105 active:scale-95"
+                    >
+                        View Github
+                    </a>
                 </div>
             </section>
         </div>
