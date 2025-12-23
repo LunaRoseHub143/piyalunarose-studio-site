@@ -4,6 +4,7 @@ import {
     Code,
     Heart,
     Activity,
+    Flame,
     Zap,
     ArrowRight,
     CheckCircle2,
@@ -147,7 +148,7 @@ const Home = ({ setShowGate }) => {
                         <div className="w-32 h-1.5 bg-gradient-to-r from-indigo-500 to-transparent mx-auto rounded-full" />
                     </div>
 
-                    <div className="grid lg:grid-cols-3 gap-10">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
                         <ServiceCard
                             icon={Code}
                             title="Web Architecture & SaaS"
@@ -185,6 +186,19 @@ const Home = ({ setShowGate }) => {
                                 "Mental stress management"
                             ]}
                             tags={["Movement", "Boxing", "Flow"]}
+                        />
+
+                        <ServiceCard
+                            icon={Flame}
+                            title="Muay Thai & Yoga Instruction"
+                            description="Teaching movement that builds discipline, nervous system steadiness, and real-world confidence."
+                            points={[
+                                "Breath + technique fundamentals",
+                                "Strength, mobility, and balance",
+                                "Stress-proof focus under pressure",
+                                "Sustainable training progression"
+                            ]}
+                            tags={["MUAY THAI", "YOGA", "MOBILITY"]}
                         />
                     </div>
                 </div>
