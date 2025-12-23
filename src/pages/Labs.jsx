@@ -1,6 +1,25 @@
-import React, { useRef } from 'react';
+import React, { useRef, Suspense } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Code, Box, Cpu, Zap, Sparkles, Layers, MousePointer2, Smartphone } from 'lucide-react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Sphere, MeshDistortMaterial, Float, MeshWobbleMaterial } from '@react-three/drei';
+import { Code, Box, Cpu, Zap, Sparkles, Layers, MousePointer2, Smartphone, Globe, BoxSelect } from 'lucide-react';
+
+const EtherealSphere = () => {
+    return (
+        <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+            <Sphere args={[1, 100, 100]} scale={2.5}>
+                <MeshDistortMaterial
+                    color="#6366f1"
+                    attach="material"
+                    distort={0.4}
+                    speed={3}
+                    roughness={0}
+                    metalness={1}
+                />
+            </Sphere>
+        </Float>
+    );
+};
 
 const Labs = () => {
     const scrollRef = useRef(null);
@@ -260,62 +279,84 @@ const Labs = () => {
                 </div>
             </section>
 
-            {/* 4. MICRO-INTERACTIONS SECTION */}
-            <section className="py-48 px-6 container mx-auto text-center">
-                <div className="flex flex-col items-center mb-24">
-                    <div className="flex items-center gap-2 text-indigo-400 font-bold tracking-widest uppercase text-[10px] mb-4 text-center">
-                        <MousePointer2 className="w-3 h-3" />
-                        <span>03 / Interaction</span>
+            {/* 5. WEBGL/3D EXPERIENCE SECTION */}
+            <section className="py-48 px-6 container mx-auto overflow-hidden">
+                <div className="grid md:grid-cols-2 gap-24 items-center">
+                    <div className="order-2 md:order-1 relative h-[500px] w-full bg-indigo-500/5 rounded-[4rem] border border-white/5 overflow-hidden">
+                        <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+                            <ambientLight intensity={1} />
+                            <pointLight position={[10, 10, 10]} intensity={1.5} color="#818cf8" />
+                            <Suspense fallback={null}>
+                                <EtherealSphere />
+                                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+                            </Suspense>
+                        </Canvas>
+                        {/* 3D Label Overlay */}
+                        <div className="absolute bottom-8 left-8 flex items-center gap-3 backdrop-blur-md bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+                            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Live WebGL Shader</span>
+                        </div>
                     </div>
-                    <h2 className="text-5xl md:text-8xl font-serif font-bold mb-8">Micro-interactions</h2>
-                    <p className="text-stone-500 font-light text-xl max-w-2xl mx-auto">Tactile feedback and physics-based motion that make the interface feel "alive" under your cursor.</p>
+
+                    <div className="order-1 md:order-2">
+                        <div className="flex items-center gap-2 text-indigo-400 font-bold tracking-widest uppercase text-[10px] mb-4">
+                            <Globe className="w-3 h-3" />
+                            <span>04 / Dimensionality</span>
+                        </div>
+                        <h2 className="text-5xl md:text-8xl font-serif font-bold mb-8">WebGL / 3D</h2>
+                        <p className="text-stone-500 font-light text-xl mb-12 leading-relaxed">
+                            Moving beyond the 2D plane. Using Three.js and GLSL shaders to create digital matter that reacts to physical laws and user orbiting.
+                        </p>
+                        <ul className="space-y-4 text-stone-400 font-light">
+                            <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500" /> Real-time geometry distortion</li>
+                            <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500" /> Physically based rendering (PBR)</li>
+                            <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500" /> Interactive ray-casting</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            {/* 6. ADVANCED MULTI-LAYER PARALLAX */}
+            <section className="py-48 relative overflow-hidden h-[120vh] flex items-center justify-center">
+                <div className="absolute inset-0 z-0">
+                    {/* Layer 1: Background Nebula (Slowest) */}
+                    <motion.div
+                        style={{ y: useTransform(scrollYProgress, [0.8, 1], [0, -100]) }}
+                        className="absolute inset-0 opacity-40 blur-sm"
+                    >
+                        <img src="/labs/crystalline_depth.png" className="w-full h-full object-cover scale-110" alt="Parallax BG" />
+                    </motion.div>
+
+                    {/* Layer 2: Floating Rings (Medium) */}
+                    <motion.div
+                        style={{ y: useTransform(scrollYProgress, [0.8, 1], [0, -300]), rotate: 120 }}
+                        className="absolute top-1/2 left-1/4 w-[600px] h-[600px] border border-indigo-500/20 rounded-full blur-md"
+                    />
+
+                    {/* Layer 3: Cosmic Orb (Fastest) */}
+                    <motion.div
+                        style={{ y: useTransform(scrollYProgress, [0.8, 1], [100, -500]) }}
+                        className="absolute top-1/2 right-1/4 w-96 h-96 opacity-60"
+                    >
+                        <img src="/labs/orbital_flow.png" className="w-full h-full object-contain" alt="Parallax Orb" />
+                    </motion.div>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <motion.button
-                        whileHover={{ scale: 1.05, border: '1px solid rgba(129, 140, 248, 0.5)' }}
-                        whileTap={{ scale: 0.95 }}
-                        className="p-12 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col items-center gap-6"
-                    >
-                        <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                            <Zap className="w-6 h-6" />
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Elastic Hover</span>
-                    </motion.button>
+                <div className="relative z-10 text-center px-6">
+                    <div className="flex items-center justify-center gap-2 text-indigo-400 font-bold tracking-widest uppercase text-[10px] mb-4">
+                        <BoxSelect className="w-3 h-3" />
+                        <span>05 / Perspective</span>
+                    </div>
+                    <h2 className="text-6xl md:text-9xl font-serif font-bold mb-8 text-white drop-shadow-2xl">Parallax Depth</h2>
+                    <p className="text-stone-300 font-light text-xl max-w-2xl mx-auto backdrop-blur-sm bg-black/10 p-4 rounded-3xl">
+                        Simulating stereoscopic depth through multi-layered kinetic motion.
+                    </p>
+                </div>
 
-                    <motion.div
-                        className="p-12 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col items-center gap-6 cursor-pointer"
-                        drag
-                        dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    >
-                        <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
-                            <Box className="w-6 h-6" />
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Physics Drag</span>
-                    </motion.div>
-
-                    <motion.div
-                        className="p-12 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col items-center gap-6 cursor-help group"
-                    >
-                        <motion.div
-                            animate={{ rotate: [0, 90, 0] }}
-                            transition={{ duration: 4, repeat: Infinity }}
-                            className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400"
-                        >
-                            <Cpu className="w-6 h-6" />
-                        </motion.div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Continuous</span>
-                    </motion.div>
-
-                    <motion.div
-                        className="p-12 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col items-center gap-6 cursor-wait"
-                        whileHover={{ borderRadius: "4rem" }}
-                    >
-                        <div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400">
-                            <Sparkles className="w-6 h-6" />
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Shape Shift</span>
-                    </motion.div>
+                {/* Depth Indicator */}
+                <div className="absolute bottom-24 right-12 flex flex-col items-center gap-4 text-white/20">
+                    <div className="text-[8px] uppercase tracking-widest vertical-text rotate-180" style={{ writingMode: 'vertical-rl' }}>Depth Field</div>
+                    <div className="w-px h-32 bg-gradient-to-t from-transparent via-white/20 to-transparent" />
                 </div>
             </section>
 
