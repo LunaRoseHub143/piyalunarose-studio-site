@@ -80,30 +80,30 @@ const Labs = () => {
                     {[
                         {
                             title: "Crystalline Depth",
-                            img: "/Users/piyaphunsawat/.gemini/antigravity/brain/d9b79fde-0639-479a-a7c8-ebc3be02046f/nebula_indigo_crystal_1766447877737.png",
+                            img: "/labs/crystalline_depth.png",
                             desc: "Refracting light through high-density frosted layers."
                         },
                         {
                             title: "Orbital Flow",
-                            img: "/Users/piyaphunsawat/.gemini/antigravity/brain/d9b79fde-0639-479a-a7c8-ebc3be02046f/cosmic_purple_orb_1766447889552.png",
+                            img: "/labs/orbital_flow.png",
                             desc: "Dynamic translucency with liquid motion gradients."
                         },
                         {
                             title: "Solar Geometry",
-                            img: "/Users/piyaphunsawat/.gemini/antigravity/brain/d9b79fde-0639-479a-a7c8-ebc3be02046f/golden_solar_geometry_1766447901589.png",
+                            img: "/labs/solar_geometry.png",
                             desc: "Intersecting planes of light within a glass framework."
                         }
                     ].map((card, i) => (
                         <motion.div
                             key={i}
                             whileHover={{ y: -10 }}
-                            className="relative group h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 bg-black flex flex-col justify-end"
+                            className="relative group h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 bg-stone-900 flex flex-col justify-end"
                         >
                             {/* Background Image with Glass Overlay */}
                             <div className="absolute inset-0 z-0">
-                                <img src={card.img} alt={card.title} className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                                <div className="absolute inset-0 backdrop-blur-[20px] group-hover:backdrop-blur-[10px] transition-all duration-700" />
+                                <img src={card.img} alt={card.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
+                                <div className="absolute inset-0 backdrop-blur-[20px] group-hover:backdrop-blur-[5px] transition-all duration-700" />
                             </div>
 
                             <div className="relative z-10 p-10">
