@@ -95,9 +95,14 @@ const App = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex items-center gap-5">
             <Logo className="w-12 h-12" />
-            <p className="text-stone-400 text-sm font-light tracking-[0.2em] uppercase">
-              © {new Date().getFullYear()} Piya LunaRose Studio
-            </p>
+            <div className="flex flex-col gap-1 text-center md:text-left">
+              <p className="text-stone-400 text-sm font-light tracking-[0.2em] uppercase">
+                © {new Date().getFullYear()} Piya LunaRose Studio
+              </p>
+              <p className="text-stone-300 text-[10px] font-light tracking-wide italic leading-relaxed max-w-xs">
+                PiyaLunaRose Studio is a subsidiary of LunaRose Healing Hub LLC, registered in CT, USA since Oct 2025.
+              </p>
+            </div>
           </div>
           <div className="flex gap-8">
             <a
