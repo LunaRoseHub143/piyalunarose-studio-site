@@ -8,6 +8,7 @@ import {
     Zap,
     Sparkles,
     ArrowRight,
+    ArrowDown,
     CheckCircle2,
     Quote
 } from 'lucide-react';
@@ -53,7 +54,7 @@ const ServiceCard = ({ icon: Icon, title, description, tags, points, footerText,
     </div>
 );
 
-const WorkCard = ({ title, subtitle, role, focus, colorClass, link }) => {
+const WorkCard = ({ title, subtitle, role, focus, colorClass, link, note }) => {
     const CardContent = (
         <>
             <div className={`absolute top-0 left-0 w-1.5 h-full ${colorClass} opacity-60 transition-all duration-500 group-hover:w-3`} />
@@ -78,6 +79,15 @@ const WorkCard = ({ title, subtitle, role, focus, colorClass, link }) => {
                         <p className="text-stone-800 font-normal leading-relaxed text-lg">{focus}</p>
                     </div>
                 </div>
+
+                {note && (
+                    <div className="mt-12 pt-8 border-t border-stone-100/50">
+                        <p className="text-stone-400 text-sm font-light italic leading-relaxed flex items-center gap-3">
+                            <span className="w-8 h-px bg-stone-200" />
+                            {note}
+                        </p>
+                    </div>
+                )}
             </div>
         </>
     );
@@ -236,7 +246,27 @@ const Home = ({ setShowGate }) => {
                             focus="Human-centered healing and educational flow."
                             colorClass="bg-emerald-500"
                             link="https://maps.app.goo.gl/QQivX2ioEXEiaTUB8"
+                            note="I am currently accepting a limited number of private clients for sessions at our Hartford sanctuary. Please book your appointment with Moonchild Thai Spa below on the ClarittView™ booking application."
                         />
+
+                        {/* Animated Arrow pointing to ClarittView */}
+                        <motion.div
+                            animate={{
+                                y: [0, 15, 0],
+                                opacity: [0.2, 1, 0.2]
+                            }}
+                            transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                            className="flex justify-center -my-4 relative z-20"
+                        >
+                            <div className="bg-white/80 p-3 rounded-full border border-stone-200 shadow-sm backdrop-blur-sm">
+                                <ArrowDown className="w-6 h-6 text-indigo-500" />
+                            </div>
+                        </motion.div>
+
                         <WorkCard
                             title="ClarittView™"
                             subtitle="SaaS Product Platform"
